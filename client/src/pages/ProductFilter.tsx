@@ -17,8 +17,8 @@ function ProductFilter() {
     return {
       keyword: searchParams.get("keyword") || "",
       category: searchParams.get("category") || "",
-      colors: searchParams.getAll("colors"),
-      sizes: searchParams.getAll("sizes"),
+      colors: searchParams.getAll("color"),
+      sizes: searchParams.getAll("size"),
       minPrice: searchParams.get("minPrice") || "",
       maxPrice: searchParams.get("maxPrice") || "",
     };
