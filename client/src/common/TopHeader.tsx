@@ -17,12 +17,13 @@ function TopHeader({ toggleCart }: TopHeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const initialKeyword = searchParams.get("keyword");
 
   const [logoutMutation] = useLogoutMutation();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
 
   // ၂။ URL ကနေ `keyword` တန်ဖိုးကို စတင်ဖတ်ယူပြီး State တည်ဆောက်ခြင်း
-  const [keyword, setKeyword] = useState("");
+  const [keyword, setKeyword] = useState(initialKeyword || "");
 
   // ၅။ User က စာရိုက်ပြီး Enter ခေါက်လိုက်ရင် ချက်ချင်း ရှာဖွေရေးစာမျက်နှာကို ပို့ပေးမယ့်စနစ်
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {

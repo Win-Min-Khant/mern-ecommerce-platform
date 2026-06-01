@@ -52,13 +52,16 @@ function ProductFilter() {
 
     // အကယ်၍ URL အဟောင်းနှင့် အသစ်မတူမှသာ Navigate လုပ်မည် (Infinite Loop မဖြစ်အောင် ကာကွယ်ခြင်း)
     if (newSearchQuery !== currentSearchQuery) {
-      navigate(
-        {
-          pathname: "/products/filter",
-          search: newSearchQuery ? `?${newSearchQuery}` : "",
-        },
-        { replace: true },
-      );
+      const timeoutId = setTimeout(() => {
+        navigate(
+          {
+            pathname: "/products/filter",
+            search: newSearchQuery ? `?${newSearchQuery}` : "",
+          },
+          { replace: true },
+        );
+      }, 100);
+      return () => clearTimeout(timeoutId);
     }
   }, [filter, location.search, navigate]);
 
