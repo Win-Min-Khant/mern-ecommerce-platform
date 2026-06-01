@@ -1,6 +1,6 @@
 import type { RootState } from "@/store";
 import { CircleUserRound, Search, ShoppingCart } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation, useSearchParams } from "react-router";
 import { clearUserInfo } from "@/store/slices/auth";
@@ -17,26 +17,51 @@ function TopHeader({ toggleCart }: TopHeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const initialKeyword = searchParams.get("keyword");
 
   const [logoutMutation] = useLogoutMutation();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [keyword, setKeyword] = useState("");
 
-  // ၂။ URL ကနေ `keyword` တန်ဖိုးကို စတင်ဖတ်ယူပြီး State တည်ဆောက်ခြင်း
-  const [keyword, setKeyword] = useState(initialKeyword || "");
+  // 💡 URL က keyword ပြောင်းရင် Input Box ထဲကစာသားကို လိုက်ပြီး Sync ပေးခြင်း
+  useEffect(() => {
+    setKeyword(searchParams.get("keyword") || "");
+  }, [searchParams]);
 
-  // ၅။ User က စာရိုက်ပြီး Enter ခေါက်လိုက်ရင် ချက်ချင်း ရှာဖွေရေးစာမျက်နှာကို ပို့ပေးမယ့်စနစ်
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // URL ကို Update လုပ်ပေးမည့် သီးသန့် Function
+  const updateKeywordInUrl = (newKeyword: string) => {
     const params = new URLSearchParams(location.search);
 
-    if (keyword.trim() !== "") {
-      params.set("keyword", keyword.trim());
+    if (newKeyword.trim() !== "") {
+      params.set("keyword", newKeyword.trim());
     } else {
       params.delete("keyword");
     }
 
-    navigate(`/products/filter?${params.toString()}`, { replace: true });
+    const newSearchQuery = params.toString();
+    const path = newSearchQuery
+      ? `/products/filter?${newSearchQuery}`
+      : "/products/filter";
+
+    // Filter Page ပေါ်မှာပဲ ရှိနေရင် Navigation Stack အမှိုက်မပွအောင် replace: true သုံးပါတယ်
+    const isFilterPage = location.pathname === "/products/filter";
+    navigate(path, { replace: isFilterPage });
+  };
+
+  // ⚡ User က စာရိုက်ပြီး Enter ခေါက်လိုက်တဲ့အခါ
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    updateKeywordInUrl(keyword);
+  };
+
+  // ⚡ စာသားတွေအကုန် ဖျက်လိုက်တဲ့အခါ ချက်ချင်း URL မှာပါ ပျောက်သွားစေမည့် Handle Function
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setKeyword(inputValue);
+
+    // စာသား လုံးဝမရှိတော့ရင် (Backspace အကုန်ဖျက်လိုက်ရင်) URL ထဲက keyword ကို ချက်ချင်းဖြုတ်ချမယ်
+    if (inputValue.trim() === "") {
+      updateKeywordInUrl("");
+    }
   };
 
   const handleLogout = async () => {
@@ -80,7 +105,7 @@ function TopHeader({ toggleCart }: TopHeaderProps) {
         >
           <input
             value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
+            onChange={handleInputChange} // 💡 Desktop Input Change
             className="outline-none py-2 ps-5 w-full text-black placeholder:text-gray-400"
             type="text"
             placeholder="Search products..."
@@ -165,7 +190,7 @@ function TopHeader({ toggleCart }: TopHeaderProps) {
           >
             <input
               value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
+              onChange={handleInputChange}
               className="outline-none py-2 ps-5 w-full text-black placeholder:text-gray-400"
               type="text"
               placeholder="Search products..."
