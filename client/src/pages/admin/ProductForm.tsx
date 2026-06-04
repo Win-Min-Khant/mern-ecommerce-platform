@@ -1,6 +1,5 @@
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -9,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { createProductSchema, type CreateProductInput } from "@/schema/product";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import ImageUpload from "./ImageUpload";
 
 interface ProductFormProps {
   initialData?: any;
@@ -27,7 +27,7 @@ function ProductForm({ initialData, isLoading, onSubmit }: ProductFormProps) {
       category: "",
       size: [""],
       color: [""],
-      images: [{ url: "", public_alt: "" }],
+      images: [],
       is_new_arrival: false,
       is_feature: false,
       rating_count: 0,
@@ -88,7 +88,7 @@ function ProductForm({ initialData, isLoading, onSubmit }: ProductFormProps) {
                   id="form-rhf-demo-instock"
                   aria-invalid={fieldState.invalid}
                   autoComplete="off"
-                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                  onChange={(e) => field.onChange(parseInt(e.target.value))}
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -97,6 +97,16 @@ function ProductForm({ initialData, isLoading, onSubmit }: ProductFormProps) {
             )}
           />
         </div>
+        <Controller
+          name="images"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="form-rhf-demo-images">Images</FieldLabel>
+              <ImageUpload images={field.value} onChange={field.onChange} />
+            </Field>
+          )}
+        />
       </FieldGroup>
     </form>
   );

@@ -11,10 +11,8 @@ function SideBar() {
   return (
     <>
       {pages.map((page, i) => (
-        <div className="text-center">
-          <Link key={i} to={page.path}>
-            {page.name}
-          </Link>
+        <div key={i} className="text-center">
+          <Link to={page.path}>{page.name}</Link>
         </div>
       ))}
     </>
