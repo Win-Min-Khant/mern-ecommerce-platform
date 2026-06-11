@@ -9,6 +9,11 @@ import { createProductSchema, type CreateProductInput } from "@/schema/product";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import ImageUpload from "./ImageUpload";
+import CategorySelect from "./CategorySelect";
+import ColorPicker from "./ColorPicker";
+import SizeSelector from "./SizeSelector";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 
 interface ProductFormProps {
   initialData?: any;
@@ -25,8 +30,8 @@ function ProductForm({ initialData, isLoading, onSubmit }: ProductFormProps) {
       price: 0,
       instock_count: 0,
       category: "",
-      size: [""],
-      color: [""],
+      size: [],
+      color: [],
       images: [],
       is_new_arrival: false,
       is_feature: false,
@@ -107,7 +112,70 @@ function ProductForm({ initialData, isLoading, onSubmit }: ProductFormProps) {
             </Field>
           )}
         />
+        <Controller
+          name="category"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="form-rhf-demo-category">Category</FieldLabel>
+              <CategorySelect value={field.value} onChange={field.onChange} />
+            </Field>
+          )}
+        />
+        <Controller
+          name="color"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="form-rhf-demo-color">Color</FieldLabel>
+              <ColorPicker colors={field.value} onChange={field.onChange} />
+            </Field>
+          )}
+        />
+        <Controller
+          name="size"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="form-rhf-demo-size">Size</FieldLabel>
+              <SizeSelector sizes={field.value} onChange={field.onChange} />
+            </Field>
+          )}
+        />
+        <div className="grid grid-cols-2 gap-10">
+          <Controller
+            name="is_new_arrival"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="form-rhf-demo-is_new_arrival">
+                  New Arrival
+                </FieldLabel>
+                <Switch />
+              </Field>
+            )}
+          />
+          <Controller
+            name="is_feature"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="form-rhf-demo-is_feature">
+                  Featured Product
+                </FieldLabel>
+                <Switch />
+              </Field>
+            )}
+          />
+        </div>
       </FieldGroup>
+      <Button type="submit" disabled={isLoading} className="mt-8">
+        {isLoading
+          ? "Saving..."
+          : initialData
+            ? "Update Product"
+            : "Create Product"}
+      </Button>
     </form>
   );
 }

@@ -28,7 +28,7 @@ function ImageUpload({ images, onChange }: ImageUploadProps) {
   };
   return (
     <div>
-      <div className="grid grid-cols-5 gap-5 mb-5">
+      <div className="grid grid-cols-5 gap-5">
         {images.map((image, i) => (
           <div className="relative w-40 h-40" key={i}>
             <img
